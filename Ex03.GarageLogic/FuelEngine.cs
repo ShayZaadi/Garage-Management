@@ -10,7 +10,7 @@ namespace Ex03.GarageLogic
 
         internal FuelEngine(float i_MaxFuelAmount, eFuelType i_FuelType)
             : base(i_MaxFuelAmount)
-        {
+        { 
             m_FuelType = i_FuelType;
         }
 
@@ -18,67 +18,12 @@ namespace Ex03.GarageLogic
         {
             StringBuilder stringBuilder = new StringBuilder();
 
-            stringBuilder.AppendLine("Fuel Type : " + m_FuelType.ToString());
+            stringBuilder.AppendFormat(
+@"EnergyPercentage : {0}% 
+Fuel Type : {1}", string.Format("{0:0.00}", EnergyPrecentLeft), m_FuelType.ToString());
+            stringBuilder.AppendLine();
 
             return stringBuilder.ToString();
-        }
-
-        public override Dictionary<int, string> GetEngineProperties()
-        {
-            Dictionary<int, string> properties = new Dictionary<int, string>();
-
-            properties.Add(1, Car.enterEnumMsg<eFuelType>("fuel type"));
-            properties.Add(2, "Please enter fuel amount");
-
-            return properties;
-        }
-
-        public override void SetProperty(int i_Property, string i_InputFromUserStr)
-        {
-            eFuelEngineProperties property = (eFuelEngineProperties)i_Property;
-            float inputFromUserFloat;
-            int inputFromUserInt;
-
-            switch (property)
-            {
-                case eFuelEngineProperties.FuelType:
-                    {
-                        if (int.TryParse(i_InputFromUserStr, out inputFromUserInt))
-                        {
-                            if (Enum.IsDefined(typeof(eFuelType), inputFromUserInt))
-                            {
-                                if ((eFuelType)inputFromUserInt != m_FuelType)
-                                {
-                                    throw new ArgumentException("Wrong fuel type!");
-                                }
-                            }
-                            else
-                            {
-                                throw new ValueOutOfRangeException(1, Enum.GetNames(typeof(eFuelType)).Length, "You have enterd out of range input!");
-                            }
-                        }
-                        else
-                        {
-                            throw new FormatException("You have enterd wrong input!");
-                        }
-
-                        break;
-                    }
-
-                case eFuelEngineProperties.CurrentAmount:
-                    {
-                        if (float.TryParse(i_InputFromUserStr, out inputFromUserFloat) && (inputFromUserFloat > 0))
-                        {
-                            CurrenteEnergy = inputFromUserFloat;
-                        }
-                        else
-                        {
-                            throw new FormatException("You have enterd wrong input!");
-                        }
-
-                        break;
-                    }
-            }
         }
 
         public enum eFuelEngineProperties

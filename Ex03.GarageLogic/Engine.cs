@@ -9,14 +9,18 @@ namespace Ex03.GarageLogic
         private readonly float r_MaxEnergy;
         private float m_CurrentEnergy;
 
-        public Engine(float i_MaxEnergy)
+        internal Engine(float i_MaxEnergy)
         {
             r_MaxEnergy = i_MaxEnergy;
         }
 
-        protected float CurrenteEnergy
+        public float CurrenteEnergy
         {
-            get { return m_CurrentEnergy; }
+            get 
+            {
+                return m_CurrentEnergy; 
+            }
+
             set
             {
                 if (value <= r_MaxEnergy)
@@ -35,49 +39,12 @@ namespace Ex03.GarageLogic
             get { return r_MaxEnergy; }
         }
 
-        public virtual Dictionary<int, string> GetEngineProperties()
-        {
-            Dictionary<int, string> properties = new Dictionary<int, string>();
-
-            properties.Add(1, "Enter current energy");
-
-            return properties;
-        }
-
-        public virtual void SetProperty(int i_Property, string i_InputFromUserStr)
-        {
-            float inputFromUserFloat;
-            eEngineProperties property = (eEngineProperties)i_Property;
-
-            switch (property)
-            {
-                case eEngineProperties.CurrentEnergy:
-                    {
-                        if (float.TryParse(i_InputFromUserStr, out inputFromUserFloat))
-                        {
-                            CurrenteEnergy = inputFromUserFloat;
-                        }
-                        else
-                        {
-                            throw new FormatException("You have enterd wrong input!");
-                        }
-
-                        break;
-                    }
-            }
-        }
-
         public float EnergyPrecentLeft
         {
             get
             {
                 return (m_CurrentEnergy * 100) / r_MaxEnergy;
             }
-        }
-
-        public enum eEngineProperties
-        {
-            CurrentEnergy = 1
         }
     }
 }

@@ -9,6 +9,12 @@ namespace Ex03.GarageLogic
         private readonly Dictionary<string, VehicleInGarage> r_VehiclesInGarage = new Dictionary<string, VehicleInGarage>();
         private VehicleInGarage m_CurrentVehicleInGarage;
 
+        public VehicleInGarage CurrentVehicleInGarage
+        {
+            get { return m_CurrentVehicleInGarage; }
+            set { m_CurrentVehicleInGarage = value; }
+        }
+
         public bool i_SetCurrentVehicleInGarage(string i_LicenseNumber)
         {
             bool isInGarage = false;
@@ -25,16 +31,10 @@ namespace Ex03.GarageLogic
         {
             Vehicle newVehicle;
             Vehicle.eVehicleType vehicleType = (Vehicle.eVehicleType)i_VehicleTypeInt;
-            if (IsLicenseInGarage(i_LicenseNumber))
-            {
-                throw new ArgumentException("The vehicle already exists in the garage!");
-            }
-            else
-            {
-                newVehicle = Vehicle.CreateVehicle(vehicleType, i_LicenseNumber);
-                m_CurrentVehicleInGarage = new VehicleInGarage(i_OwnerName, i_OwnerPhone, newVehicle);
-                r_VehiclesInGarage.Add(i_LicenseNumber, m_CurrentVehicleInGarage);
-            }
+            newVehicle = Vehicle.CreateVehicle(vehicleType, i_LicenseNumber);
+            m_CurrentVehicleInGarage = new VehicleInGarage(i_OwnerName, i_OwnerPhone, newVehicle);
+            r_VehiclesInGarage.Add(i_LicenseNumber, m_CurrentVehicleInGarage);
+            m_CurrentVehicleInGarage.OwnerVehicle.VehicleType = vehicleType;
         }
 
         public bool CheckIfVehicleExistsAndChangeStatus(string i_LicenseNumber, out string o_MsgToUser)
@@ -45,11 +45,11 @@ namespace Ex03.GarageLogic
             {
                 m_CurrentVehicleInGarage = r_VehiclesInGarage[i_LicenseNumber];
                 m_CurrentVehicleInGarage.VehicleStatus = VehicleInGarage.eVehicleStatus.InRepair;
-                o_MsgToUser = "The vehicle already exists in the garage. Status changed to In Repair";
+                o_MsgToUser = "The vehicle already exists in the garage.";
             }
             else
             {
-                o_MsgToUser = "New car in the garage!";
+                o_MsgToUser = "New vehicle in the garage!";
             }
 
             return !isVehicleExists;
@@ -137,34 +137,6 @@ namespace Ex03.GarageLogic
             if (m_CurrentVehicleInGarage != null)
             {
                 m_CurrentVehicleInGarage.OwnerVehicle.AddMaxAirToWheels();
-            }
-            else
-            {
-                throw new ArgumentException("No vehicle was set!");
-            }
-        }
-
-        public Dictionary<int, string> GetEnergyProperties()
-        {
-            Dictionary<int, string> properties;
-
-            if (m_CurrentVehicleInGarage != null)
-            {
-                properties = m_CurrentVehicleInGarage.OwnerVehicle.EngineSystem.GetEngineProperties();
-            }
-            else
-            {
-                throw new ArgumentException("No vehicle was set!");
-            }
-
-            return properties;
-        }
-
-        public void SetEngineProperty(int i_Property, string i_InputFromUser)
-        {
-            if (m_CurrentVehicleInGarage != null)
-            {
-                m_CurrentVehicleInGarage.OwnerVehicle.EngineSystem.SetProperty(i_Property, i_InputFromUser);
             }
             else
             {
@@ -265,7 +237,65 @@ namespace Ex03.GarageLogic
             {
                 throw new ArgumentException("No vehicle was set!");
             }
+
             return details;
+        }
+
+        public void CheckMyChoiceFuelType(FuelEngine.eFuelType i_CurrentFuelType)
+        {
+            bool isInputValid1;
+            bool isInputValid2 = false;
+            FuelEngine.eFuelType myChoise;
+            do
+            {
+                try
+                {
+                    myChoise = (FuelEngine.eFuelType)int.Parse(Console.ReadLine());
+                    do
+                    {
+                        isInputValid1 = true;
+                        if (myChoise != i_CurrentFuelType)
+                        {
+                            Console.WriteLine("Your fuel type is incorrect");
+                            myChoise = (FuelEngine.eFuelType)int.Parse(Console.ReadLine());
+                            i_CurrentFuelType = m_CurrentVehicleInGarage.OwnerVehicle.FuelType;
+                            isInputValid1 = false;
+                        }
+                    }
+                    while (!isInputValid1);
+                    isInputValid2 = true;
+                }
+                catch
+                {
+                    Console.WriteLine("Your fuel type is incorrect");
+                }
+            }
+            while (!isInputValid2);
+        }
+
+        public void CheckMyFuelAmount()
+        {
+            Engine currentEngine = m_CurrentVehicleInGarage.OwnerVehicle.EngineSystem;
+            float MaxEnergy = m_CurrentVehicleInGarage.OwnerVehicle.EngineSystem.MaxEngineEnergy;
+            float CurrentEnergy = m_CurrentVehicleInGarage.OwnerVehicle.EngineSystem.CurrenteEnergy;
+            float MyAmount;
+            bool isInputValid;
+            do
+            {
+                isInputValid = true;
+                if (float.TryParse(Console.ReadLine(), out MyAmount) && (MaxEnergy >= MyAmount + CurrentEnergy))
+                {
+                    float NewCurrentEnergy = currentEngine.CurrenteEnergy;
+                    NewCurrentEnergy += MyAmount;
+                    currentEngine.CurrenteEnergy = NewCurrentEnergy;
+                }
+                else
+                {
+                    Console.WriteLine("Please enter value between 0 to {0}", MaxEnergy - CurrentEnergy);
+                    isInputValid = false;
+                }
+            }
+            while (!isInputValid);
         }
     }
 }

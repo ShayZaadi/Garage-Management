@@ -8,7 +8,7 @@ namespace Ex03.ConsoleUI
 {
     public class UIMenu
     {
-        Menu m_Menu;
+        private Menu m_Menu;
 
         public static void RunMenu()
         {            
@@ -38,6 +38,7 @@ namespace Ex03.ConsoleUI
         public class InsertCarCommand : ICommand
         {
             public UIMenu Client { get; set; }
+
             GarageManagementUI garageUI = GarageManagementUI.Instance;
 
             public void Execute()
@@ -49,6 +50,7 @@ namespace Ex03.ConsoleUI
         public class ListVehiclesCommand : ICommand
         {
             public UIMenu Client { get; set; }
+
             GarageManagementUI garageUI = GarageManagementUI.Instance;
 
             public void Execute()
@@ -60,6 +62,7 @@ namespace Ex03.ConsoleUI
         public class ChangeStatusCommand : ICommand
         {
             public UIMenu Client { get; set; }
+
             GarageManagementUI garageUI = GarageManagementUI.Instance;
 
             public void Execute()
@@ -71,6 +74,7 @@ namespace Ex03.ConsoleUI
         public class FillWheelsCommand : ICommand
         {
             public UIMenu Client { get; set; }
+
             GarageManagementUI garageUI = GarageManagementUI.Instance;
 
             public void Execute()
@@ -82,6 +86,7 @@ namespace Ex03.ConsoleUI
         public class LoadCommand : ICommand
         {
             public UIMenu Client { get; set; }
+
             GarageManagementUI garageUI = GarageManagementUI.Instance;
 
             public void Execute()
@@ -93,6 +98,7 @@ namespace Ex03.ConsoleUI
         public class DetailsCommand : ICommand
         {
             public UIMenu Client { get; set; }
+
             GarageManagementUI garageUI = GarageManagementUI.Instance;
 
             public void Execute()
@@ -110,6 +116,7 @@ namespace Ex03.ConsoleUI
     public class MenuItem
     {
         public ICommand Command { get; set; }
+
         public string Text { get; set; }
 
         public virtual void Selected()

@@ -4,14 +4,28 @@ using System.Text;
 
 namespace Ex03.GarageLogic
 {
-    public abstract class Car : Vehicle
+    public class Car : Vehicle
     {
+        private const float k_MaxWheelAirPressure = 32;
+        private const int k_NumOfWheels = 4;
+        private const float k_MaxFuelAmount = 50f;
+        private const float k_MaxBatteryTime = 2.8f;
         private eCarNumberOfDoors m_NumberOfDoors;
         private eCarColor m_CarColor;
 
-        internal Car(string i_LicenseNumber, float i_MaxWheelAirPressure, int i_NumOfWheels)
-            : base(i_LicenseNumber, i_MaxWheelAirPressure, i_NumOfWheels)
+        internal Car(string i_LicenseNumber, eVehicleType i_VehicleType)
+            : base(i_LicenseNumber, k_MaxWheelAirPressure, k_NumOfWheels, FuelEngine.eFuelType.Octan98)
         {
+            if (i_VehicleType == eVehicleType.FuelCar)
+            {
+                EngineSystem = new FuelEngine(k_MaxFuelAmount, FuelEngine.eFuelType.Octan98);
+            }
+
+            else
+            {
+                EngineSystem = new ElectricEngine(k_MaxBatteryTime);
+            }
+            VehicleType = i_VehicleType;
         }
 
         public eCarNumberOfDoors NumberOfDoors
@@ -88,9 +102,10 @@ namespace Ex03.GarageLogic
             StringBuilder stringBuilder = new StringBuilder();
 
             stringBuilder.AppendFormat(
-@"Car color : {0}:
+@"Car color : {0}
 Number of doors : {1}
-", m_CarColor.ToString(), NumberOfDoors.ToString());
+Vehicle type : {2}
+", m_CarColor.ToString(), NumberOfDoors.ToString(), VehicleType.ToString());
 
             return base.ToString() + stringBuilder.ToString();
         }
@@ -100,25 +115,10 @@ Number of doors : {1}
             Dictionary<int, string> properties = new Dictionary<int, string>();
 
             properties.Add((int)eCarProperties.Model, "\nPlease enter model");
-            properties.Add((int)eCarProperties.Color, enterEnumMsg<eCarColor>("\nPlease enter car color"));
-            properties.Add((int)eCarProperties.NumberOfDoors, enterEnumMsg<eCarNumberOfDoors>("\nPlease enter number of doors"));
+            properties.Add((int)eCarProperties.Color, Vehicle.enterEnumMsg<eCarColor>("car color"));
+            properties.Add((int)eCarProperties.NumberOfDoors, Vehicle.enterEnumMsg<eCarNumberOfDoors>("number of doors"));
 
             return properties;
-        }
-
-        public static string enterEnumMsg<T>(string i_ValueName)
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-            int index = 1;
-
-            stringBuilder.AppendFormat("\nPlease enter {0}{1}", i_ValueName, Environment.NewLine);
-            foreach (T currentValue in Enum.GetValues(typeof(T)))
-            {
-                stringBuilder.AppendFormat("{0} - {1}{2}", index, currentValue.ToString(), Environment.NewLine);
-                index++;
-            }
-
-            return stringBuilder.ToString();
         }
 
         public enum eCarProperties

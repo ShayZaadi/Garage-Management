@@ -4,14 +4,23 @@ using System.Text;
 
 namespace Ex03.GarageLogic
 {
-    public abstract class Truck : Vehicle
+    public class Truck : Vehicle
     {
         private bool m_isCarryingDangerousMaterials;
         private float m_MaxCarryWeight;
+        private const float k_MaxWheelAirPressure = 34;
+        private const int k_NumOfWheels = 12;
+        private const float k_MaxFuelAmount = 130f;
 
-        internal Truck(string i_LicenseNumber, float i_MaxWheelAirPressure, int i_NumOfWheels)
-            : base(i_LicenseNumber, i_MaxWheelAirPressure, i_NumOfWheels)
+        internal Truck(string i_LicenseNumber, eVehicleType i_VehicleType)
+            : base(i_LicenseNumber, k_MaxWheelAirPressure, k_NumOfWheels, FuelEngine.eFuelType.Soler)
         {
+            if (i_VehicleType == eVehicleType.FuelTruck)
+            {
+                EngineSystem = new FuelEngine(k_MaxFuelAmount, FuelEngine.eFuelType.Soler);
+            }   
+         
+            VehicleType = i_VehicleType;
         }
 
         public bool IsCarryingDangerousMaterials
@@ -98,7 +107,8 @@ namespace Ex03.GarageLogic
             stringBuilder.AppendFormat(
  @"Max carry weight  :{0}
 Contains dangerous goods : {1}
-", m_MaxCarryWeight.ToString(), m_isCarryingDangerousMaterials.ToString());
+Vehicle type : {2}
+", m_MaxCarryWeight.ToString(), m_isCarryingDangerousMaterials.ToString(), VehicleType.ToString());
 
             return stringBuilder.ToString() + base.ToString();
         }

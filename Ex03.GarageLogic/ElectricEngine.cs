@@ -11,13 +11,14 @@ namespace Ex03.GarageLogic
         {
         }
 
-        public override Dictionary<int, string> GetEngineProperties()
+        public override string ToString()
         {
-            Dictionary<int, string> properties = new Dictionary<int, string>();
+            StringBuilder stringBuilder = new StringBuilder();
 
-            properties.Add(1, "Enter current battery time");
+            stringBuilder.AppendFormat("EnergyPercentage : {0}% ", string.Format("{0:0.00}", EnergyPrecentLeft));
+            stringBuilder.AppendLine();
 
-            return properties;
+            return stringBuilder.ToString();
         }
     }
 }

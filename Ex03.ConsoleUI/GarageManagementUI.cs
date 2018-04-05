@@ -41,7 +41,6 @@ namespace Ex03.GarageManagementSystem.ConsoleUI
                 Console.WriteLine(msg);
                 Console.WriteLine("\nPlease enter owner name");
                 string ownerName = Console.ReadLine();
-
                 Console.WriteLine("\nPlease enter owner phone number ");
                 string ownerPhoneNumber = Console.ReadLine();
                 int typeOfVehicleFromUser = GetVehicleTypeFromUser();
@@ -59,50 +58,6 @@ namespace Ex03.GarageManagementSystem.ConsoleUI
             else
             {
                 Console.WriteLine(msg);
-            }
-        }
-
-        public void LoadFuelOrBattery()
-        {
-            SetLicenseNumber();
-            Dictionary<int, string> energyProperties = m_GarageActions.GetEnergyProperties();
-            bool isValid;
-
-            for (int i = 1; i <= energyProperties.Count; i++)
-            {
-                isValid = false;
-                Console.WriteLine(energyProperties[i]);
-                do
-                {
-                    try
-                    {
-                        m_GarageActions.SetEngineProperty(i, Console.ReadLine());
-                        isValid = true;
-                    }
-                    catch (ValueOutOfRangeException ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                        Console.WriteLine("value are between {0} to {1}", ex.MinValue, ex.MaxValue);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                }
-                while (!isValid);
-            }
-        }
-
-        public void ShowVehicleFullDetails()
-        {
-            try
-            {
-                SetLicenseNumber();
-                Console.WriteLine(m_GarageActions.GetVehicleDetails());
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
             }
         }
 
@@ -142,7 +97,7 @@ namespace Ex03.GarageManagementSystem.ConsoleUI
                 }
             }
             while (!isInputValid);
-        }        
+        }
 
         public void ChangeVehicleStatus()
         {
@@ -167,6 +122,10 @@ namespace Ex03.GarageManagementSystem.ConsoleUI
                     Console.WriteLine(ex.Message);
                 }
             }
+            else
+            {
+                Console.WriteLine("The value you entered is incorrect");
+            }
         }
 
         public void FillAirPressureToMax()
@@ -175,6 +134,45 @@ namespace Ex03.GarageManagementSystem.ConsoleUI
             {
                 SetLicenseNumber();
                 m_GarageActions.TryAddMaxAirToWheels();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        public void LoadFuelOrBattery()
+        {
+            FuelEngine.eFuelType currentFuelType;
+            SetLicenseNumber();
+            string typeVehicle = m_GarageActions.CurrentVehicleInGarage.OwnerVehicle.VehicleType.ToString();
+            bool isExist = Enum.IsDefined(typeof(Vehicle.eFuelVeicle), typeVehicle);
+            if (isExist == true)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Please choose fuel type");
+                Console.WriteLine();
+                int index = 1;
+                foreach (FuelEngine.eFuelType value in Enum.GetValues(typeof(FuelEngine.eFuelType)))
+                {
+                    Console.WriteLine("{0} : {1}", index.ToString(), value.ToString());
+                    index++;
+                }
+
+                currentFuelType = m_GarageActions.CurrentVehicleInGarage.OwnerVehicle.FuelType;
+                m_GarageActions.CheckMyChoiceFuelType(currentFuelType);
+            }
+
+            Console.WriteLine("Please enter fuel amount");
+            m_GarageActions.CheckMyFuelAmount();
+        }
+
+        public void ShowVehicleFullDetails()
+        {
+            try
+            {
+                SetLicenseNumber();
+                Console.WriteLine(m_GarageActions.GetVehicleDetails());
             }
             catch (Exception ex)
             {
@@ -212,7 +210,7 @@ namespace Ex03.GarageManagementSystem.ConsoleUI
 
             while (!m_GarageActions.i_SetCurrentVehicleInGarage(Console.ReadLine()))
             {
-                Console.WriteLine("vehicle does not exists! pLease enter correct license number!");
+                throw new ArgumentException("vehicle does not exists! Please enter correct license number!");
             }
         }
 
@@ -257,6 +255,10 @@ namespace Ex03.GarageManagementSystem.ConsoleUI
                 if (int.TryParse(Console.ReadLine(), out userChoice))
                 {
                     isInputValid = m_GarageActions.isUserVehicleTypeChoiceLegal(userChoice);
+                    if (isInputValid == false)
+                    {
+                        Console.WriteLine("Please enter valid input\n");
+                    }
                 }
             }
             while (!isInputValid);

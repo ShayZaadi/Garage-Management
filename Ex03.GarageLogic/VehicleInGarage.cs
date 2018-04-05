@@ -46,10 +46,10 @@ namespace Ex03.GarageLogic
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendFormat(
-@"Owner name {0}: 
-Owner phone {1}:
-Vehicle status {2}: 
-{3}:", m_OwnerName, m_OwnerPhone, m_VehicleStatus.ToString(), r_Vehicle.ToString());
+@"Owner name : {0} 
+Owner phone : {1}
+Vehicle status : {2} 
+{3}", m_OwnerName, m_OwnerPhone, m_VehicleStatus.ToString(), r_Vehicle.ToString());
 
             return stringBuilder.ToString();
         }

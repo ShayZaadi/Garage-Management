@@ -4,14 +4,27 @@ using System.Text;
 
 namespace Ex03.GarageLogic
 {
-    internal abstract class MotorCycle : Vehicle
+    internal class MotorCycle : Vehicle
     {
         private eLicenseType m_LicenseType;
         private int m_EngineCapacity;
+        private const int m_NumOfWheels = 2;
+        private const float m_MaxWheelAirPressure = 28;
+        private const float k_MaxBatteryTime = 1.6f;
+        private const float k_MaxFuelAmount = 5.5f;
 
-        internal MotorCycle(string i_LicenseNumber, float i_MaxWheelAirPressure, int i_NumOfWheels)
-            : base(i_LicenseNumber, i_MaxWheelAirPressure, i_NumOfWheels)
+        internal MotorCycle(string i_LicenseNumber, eVehicleType i_VehicleType)
+            : base(i_LicenseNumber, m_MaxWheelAirPressure, m_NumOfWheels, FuelEngine.eFuelType.Octan95)
         {
+            if (i_VehicleType == eVehicleType.FuelMotorCycle)
+            {
+                EngineSystem = new FuelEngine(k_MaxFuelAmount, FuelEngine.eFuelType.Octan95);
+            }
+            else
+            {
+                EngineSystem = new ElectricEngine(k_MaxBatteryTime);
+            }
+            VehicleType = eVehicleType.FuelMotorCycle;
         }
 
         public eLicenseType LicenseType
@@ -31,7 +44,7 @@ namespace Ex03.GarageLogic
             Dictionary<int, string> properties = new Dictionary<int, string>();
 
             properties.Add((int)eMotorCycleProperties.Model, "\nPlease enter model");
-            properties.Add((int)eMotorCycleProperties.LicenseType, Car.enterEnumMsg<eLicenseType>("nPlease enter LicenseNumber type"));
+            properties.Add((int)eMotorCycleProperties.LicenseType, Vehicle.enterEnumMsg<eLicenseType>("LicenseNumber type"));
             properties.Add((int)eMotorCycleProperties.EngineCapacity, "\nPlease enter engine capacity");
 
             return properties;
@@ -93,7 +106,8 @@ namespace Ex03.GarageLogic
 
             stringBuilder.AppendFormat(
 @"License Type : {0}
-Engine capacity : {1}", m_LicenseType.ToString(), m_EngineCapacity.ToString());
+Engine capacity : {1}
+Vehicle type : {2}", m_LicenseType.ToString(), m_EngineCapacity.ToString(), VehicleType.ToString());
 
             return base.ToString() + stringBuilder.ToString();
         }
